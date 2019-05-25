@@ -324,10 +324,10 @@ class BaseRecognizer:
         src = np.array(expand(vertex, ratio), dtype=np.float32)
         # 変換後の各頂点
         dst = np.array([
-            np.array([margin, margin]),
-            np.array([width - 1 - margin, margin]),
-            np.array([width - 1 - margin, height - 1 - margin]),
-            np.array([margin, height - 1 - margin])
+            [margin, margin],
+            [width - 1 - margin, margin],
+            [width - 1 - margin, height - 1 - margin],
+            [margin, height - 1 - margin]
         ], dtype=np.float32)
         # 変換行列
         trans = cv2.getPerspectiveTransform(src, dst)
@@ -336,10 +336,10 @@ class BaseRecognizer:
             flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=outer)
         # marginを塗りつぶす
         if margin > 0:
-            board = cv2.rectangle(board, (0, 0), (width - 1, margin), outer, -1)
-            board = cv2.rectangle(board, (0, 0), (margin, height - 1), outer, -1)
-            board = cv2.rectangle(board, (width - margin, 0), (width - 1, height - 1), outer, -1)
-            board = cv2.rectangle(board, (0, height - margin), (width - 1, height - 1), outer, -1)
+            cv2.rectangle(board, (0, 0), (width - 1, margin), outer, -1)
+            cv2.rectangle(board, (0, 0), (margin, height - 1), outer, -1)
+            cv2.rectangle(board, (width - margin, 0), (width - 1, height - 1), outer, -1)
+            cv2.rectangle(board, (0, height - margin), (width - 1, height - 1), outer, -1)
         return board
     
     def _detectConvexHull(self, image):
@@ -609,8 +609,8 @@ class RealBoardRecognizer(BaseRecognizer):
             # 取得失敗
             return False, None
 
-        # 求めたhullは緑色領域を一度膨張・収縮させているため、より正確に領域を求めるため、
-        # 求めた範囲内で膨張・収縮前のhullを取り直す
+        # 求めたhullは緑色領域に一度白色領域を加えているため、より正確に領域を求めるため、
+        # 求めた範囲内で緑色領域のみのhullを取り直す
 
         # この領域内での膨張前の緑色領域を取得する
         green = cv2.bitwise_and(green, green, mask=mask)
