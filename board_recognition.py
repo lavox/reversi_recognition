@@ -593,7 +593,7 @@ class RealBoardRecognizer(BaseRecognizer):
                     cv2.inRange(hsv, np.array([0, 0, 128]), np.array([180, 50, 255])))
 
         # 領域の輪郭を抽出
-        image, contours, hierarchy = cv2.findContours(greenWhite, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv2.findContours(greenWhite, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         # 画像の中央を含む領域を候補として抽出する(画像中央付近に盤がある前提)
         for i, c in enumerate(contours):
@@ -615,7 +615,7 @@ class RealBoardRecognizer(BaseRecognizer):
         # この領域内での膨張前の緑色領域を取得する
         green = cv2.bitwise_and(green, green, mask=mask)
         # 凸包を再度取得する
-        image, contours, hierarchy = cv2.findContours(green, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv2.findContours(green, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         c = cv2.convexHull(functools.reduce(lambda x, y: np.append(x, y, axis=0), contours))
 
         # サイズを縮小していた場合は、元のサイズに戻す
@@ -925,7 +925,7 @@ class ScreenshotRecognizer(RealBoardRecognizer):
         maxImg = cv2.inRange(labelimg, np.array([maxIdx + 1]), np.array([maxIdx + 1])) # 先頭を省いて最大を求めたため、+1した
 
         # 最大領域の輪郭を取得する
-        _, contours, _ = cv2.findContours(maxImg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(maxImg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         # 1件でない場合は探索失敗とする
         if len(contours) != 1:
@@ -1196,7 +1196,7 @@ class PrintedBoardRecognizer(RealBoardRecognizer):
         blackImage = cv2.inRange(blackImage, np.array([0]), np.array([216]))
 
         # 領域の輪郭を抽出
-        image, contours, hierarchy = cv2.findContours(blackImage, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv2.findContours(blackImage, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         for i, c in enumerate(contours):
             # 4点未満の場合はスキップ
             if len(contours[i]) < 4:
