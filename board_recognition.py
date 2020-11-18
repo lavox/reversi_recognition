@@ -306,7 +306,7 @@ class BaseRecognizer:
             # force = Trueなので失敗しないはず。
             return False, None
 
-    def extractBoard(self, image, vertex, size, ratio = 1.0, margin = 0, outer=(0, 0, 0)):
+    def extractBoard(self, image, vertex, size, ratio = 1.0, margin = 0, outer=(0, 0, 0), fillMargin = True):
         """
         検出した盤を正方形に変換した画像を取得
 
@@ -335,7 +335,7 @@ class BaseRecognizer:
         board = cv2.warpPerspective(image, trans, (int(width), int(height)), \
             flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT, borderValue=outer)
         # marginを塗りつぶす
-        if margin > 0:
+        if (fillMargin and margin > 0):
             cv2.rectangle(board, (0, 0), (width - 1, margin), outer, -1)
             cv2.rectangle(board, (0, 0), (margin, height - 1), outer, -1)
             cv2.rectangle(board, (width - margin, 0), (width - 1, height - 1), outer, -1)
@@ -1224,7 +1224,7 @@ class PrintedBoardRecognizer(RealBoardRecognizer):
         # 盤を切り出した画像の取得
         board = self.extractBoard(gray, result.vertex, \
             [BaseRecognizer._EXTRACT_IMG_SIZE, BaseRecognizer._EXTRACT_IMG_SIZE], \
-            ratio=1.0, margin=BaseRecognizer._BOARD_MARGIN, outer=(96))
+            ratio=1.0, margin=BaseRecognizer._BOARD_MARGIN, outer=(96), fillMargin=False)
 
         # 二値化
         binBoard = cv2.adaptiveThreshold(board, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 81, 2)
